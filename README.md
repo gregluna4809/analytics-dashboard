@@ -192,13 +192,23 @@ curl -X POST https://your-api-url.com/dev/api/entries \
   }'
 ```
 
-## 🔐 Security
+## 🔐 Security & Monitoring
 
-- **VPC Isolation** - RDS database not publicly accessible
-- **Security Groups** - Restrictive firewall rules
-- **SSL/TLS** - Encrypted database connections
-- **IAM Roles** - Least privilege access
-- **CORS** - Configured to prevent unauthorized access
+### Security Architecture
+- ✅ **VPC Isolation** - Database in private subnets, not publicly accessible
+- ✅ **Security Groups** - Restrictive firewall rules (Lambda → RDS only)
+- ✅ **SSL/TLS** - Encrypted database connections
+- ✅ **IAM Roles** - Least privilege access for Lambda functions
+- ✅ **Input Validation** - Parameterized queries prevent SQL injection
+
+### Monitoring & Observability
+- ✅ **CloudWatch Alarms** - Automated alerting for Lambda and API Gateway errors
+- ✅ **CloudWatch Logs** - Comprehensive logging for all Lambda invocations
+- ✅ **Metrics Tracking** - Real-time performance monitoring
+
+For detailed security documentation, see [SECURITY.md](SECURITY.md).
+
+**Compliance:** Architecture aligns with NIST Cybersecurity Framework controls
 
 ## 💰 Cost Optimization
 
