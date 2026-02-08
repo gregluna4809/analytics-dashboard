@@ -1,6 +1,9 @@
 
+## 🚀 Live Demo
 
----
+**Frontend:** [http://analytics-dashboard-gregoryluna.s3-website-us-east-1.amazonaws.com](http://analytics-dashboard-gregoryluna.s3-website-us-east-1.amazonaws.com)
+
+**API Base:** `https://5bdlur57z0.execute-api.us-east-1.amazonaws.com/dev`---
 
 # Analytics Dashboard - Serverless Full-Stack Application
 
