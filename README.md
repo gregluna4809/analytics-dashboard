@@ -1,7 +1,7 @@
 
 ## 🚀 Live Demo
 
-**Frontend:** [http://analytics-dashboard-gregoryluna.s3-website-us-east-1.amazonaws.com](http://analytics-dashboard-gregoryluna.s3-website-us-east-1.amazonaws.com)
+**Frontend:** [https://dwtocy9e715wy.cloudfront.net](https://dwtocy9e715wy.cloudfront.net)
 
 **API Base:** `https://5bdlur57z0.execute-api.us-east-1.amazonaws.com/dev`---
 
@@ -16,7 +16,7 @@ A production-ready serverless analytics dashboard built with React and deployed 
 
 ## 🚀 Live Demo
 
-**Frontend:** [http://analytics-dashboard-gregoryluna.s3-website-us-east-1.amazonaws.com](http://analytics-dashboard-gregoryluna.s3-website-us-east-1.amazonaws.com)
+**Frontend:** [https://dwtocy9e715wy.cloudfront.net](https://dwtocy9e715wy.cloudfront.net)
 
 **API Base:** `https://5bdlur57z0.execute-api.us-east-1.amazonaws.com/dev`
 
