@@ -1,0 +1,99 @@
+service: analytics-dashboard-api
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  stage: dev
+  environment:
+    DB_HOST: ${env:DB_HOST}
+    DB_USER: ${env:DB_USER}
+    DB_PASS: ${env:DB_PASS}
+    DB_NAME: ${env:DB_NAME}
+    DB_PORT: ${env:DB_PORT}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+        - ec2:AssignPrivateIpAddresses
+        - ec2:UnassignPrivateIpAddresses
+      Resource: "*"
+  vpc:
+    securityGroupIds:
+      - sg-07f8e5e39b6c2c687
+    subnetIds:
+      - subnet-002067f89a3e5fad2
+      - subnet-06f348836099aef56
+
+functions:
+  health:
+    handler: handler.health
+    events:
+      - http:
+          path: /api/health
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - x-user-id
+              - X-User-Id
+            allowCredentials: true
+  
+  setup:
+    handler: setup.handler
+    events:
+      - http:
+          path: /api/setup
+          method: get
+          cors: true
+  
+  migrate:
+    handler: migrate.handler
+    events:
+      - http:
+          path: /api/migrate
+          method: get
+          cors: true
+  
+  getEntries:
+    handler: handler.getEntries
+    events:
+      - http:
+          path: /api/entries
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - x-user-id
+              - X-User-Id
+            allowCredentials: true
+  
+  createEntry:
+    handler: handler.createEntry
+    events:
+      - http:
+          path: /api/entries
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - x-user-id
+              - X-User-Id
+            allowCredentials: true

@@ -1,0 +1,3832 @@
+{
+  "/Users/gregoryluna/Desktop/serverless-dashboard/backend/serverless.yml": {
+    "versionFramework": "4.31.2",
+    "servicePath": "/Users/gregoryluna/Desktop/serverless-dashboard/backend/serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "analytics-dashboard-api",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs20.x",
+        "region": "us-east-1",
+        "stage": "dev",
+        "environment": {
+          "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+          "DB_USER": "postgres",
+          "DB_PASS": "s2321493A!",
+          "DB_NAME": "analytics_dashboard",
+          "DB_PORT": "5432"
+        },
+        "iamRoleStatements": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "ec2:CreateNetworkInterface",
+              "ec2:DescribeNetworkInterfaces",
+              "ec2:DeleteNetworkInterface",
+              "ec2:AssignPrivateIpAddresses",
+              "ec2:UnassignPrivateIpAddresses"
+            ],
+            "Resource": "*"
+          }
+        ],
+        "vpc": {
+          "securityGroupIds": [
+            "sg-07f8e5e39b6c2c687"
+          ],
+          "subnetIds": [
+            "subnet-002067f89a3e5fad2",
+            "subnet-06f348836099aef56"
+          ]
+        },
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "HealthLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-health"
+              }
+            },
+            "SetupLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-setup"
+              }
+            },
+            "MigrateLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-migrate"
+              }
+            },
+            "GetEntriesLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-getEntries"
+              }
+            },
+            "CreateEntryLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-createEntry"
+              }
+            },
+            "IamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "analytics-dashboard-api",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:TagResource"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/analytics-dashboard-api-dev*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/analytics-dashboard-api-dev*:*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "ec2:CreateNetworkInterface",
+                            "ec2:DescribeNetworkInterfaces",
+                            "ec2:DeleteNetworkInterface",
+                            "ec2:AssignPrivateIpAddresses",
+                            "ec2:UnassignPrivateIpAddresses"
+                          ],
+                          "Resource": "*"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "analytics-dashboard-api",
+                      "dev",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                },
+                "ManagedPolicyArns": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+                      ]
+                    ]
+                  }
+                ]
+              }
+            },
+            "HealthLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+                  "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+                },
+                "Handler": "handler.health",
+                "Runtime": "nodejs20.x",
+                "FunctionName": "analytics-dashboard-api-dev-health",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                    "DB_USER": "postgres",
+                    "DB_PASS": "s2321493A!",
+                    "DB_NAME": "analytics_dashboard",
+                    "DB_PORT": "5432"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                },
+                "VpcConfig": {
+                  "SecurityGroupIds": [
+                    "sg-07f8e5e39b6c2c687"
+                  ],
+                  "SubnetIds": [
+                    "subnet-002067f89a3e5fad2",
+                    "subnet-06f348836099aef56"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "HealthLogGroup"
+              ]
+            },
+            "SetupLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+                  "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+                },
+                "Handler": "setup.handler",
+                "Runtime": "nodejs20.x",
+                "FunctionName": "analytics-dashboard-api-dev-setup",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                    "DB_USER": "postgres",
+                    "DB_PASS": "s2321493A!",
+                    "DB_NAME": "analytics_dashboard",
+                    "DB_PORT": "5432"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                },
+                "VpcConfig": {
+                  "SecurityGroupIds": [
+                    "sg-07f8e5e39b6c2c687"
+                  ],
+                  "SubnetIds": [
+                    "subnet-002067f89a3e5fad2",
+                    "subnet-06f348836099aef56"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "SetupLogGroup"
+              ]
+            },
+            "MigrateLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+                  "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+                },
+                "Handler": "migrate.handler",
+                "Runtime": "nodejs20.x",
+                "FunctionName": "analytics-dashboard-api-dev-migrate",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                    "DB_USER": "postgres",
+                    "DB_PASS": "s2321493A!",
+                    "DB_NAME": "analytics_dashboard",
+                    "DB_PORT": "5432"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                },
+                "VpcConfig": {
+                  "SecurityGroupIds": [
+                    "sg-07f8e5e39b6c2c687"
+                  ],
+                  "SubnetIds": [
+                    "subnet-002067f89a3e5fad2",
+                    "subnet-06f348836099aef56"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "MigrateLogGroup"
+              ]
+            },
+            "GetEntriesLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+                  "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+                },
+                "Handler": "handler.getEntries",
+                "Runtime": "nodejs20.x",
+                "FunctionName": "analytics-dashboard-api-dev-getEntries",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                    "DB_USER": "postgres",
+                    "DB_PASS": "s2321493A!",
+                    "DB_NAME": "analytics_dashboard",
+                    "DB_PORT": "5432"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                },
+                "VpcConfig": {
+                  "SecurityGroupIds": [
+                    "sg-07f8e5e39b6c2c687"
+                  ],
+                  "SubnetIds": [
+                    "subnet-002067f89a3e5fad2",
+                    "subnet-06f348836099aef56"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "GetEntriesLogGroup"
+              ]
+            },
+            "CreateEntryLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+                  "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+                },
+                "Handler": "handler.createEntry",
+                "Runtime": "nodejs20.x",
+                "FunctionName": "analytics-dashboard-api-dev-createEntry",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                    "DB_USER": "postgres",
+                    "DB_PASS": "s2321493A!",
+                    "DB_NAME": "analytics_dashboard",
+                    "DB_PORT": "5432"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                },
+                "VpcConfig": {
+                  "SecurityGroupIds": [
+                    "sg-07f8e5e39b6c2c687"
+                  ],
+                  "SubnetIds": [
+                    "subnet-002067f89a3e5fad2",
+                    "subnet-06f348836099aef56"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "CreateEntryLogGroup"
+              ]
+            },
+            "HealthLambdaVersionjisdMu79Cbvl2oI02MKzjNsKp2a0v8IG0IiYM9SXfA": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "HealthLambdaFunction"
+                },
+                "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+              }
+            },
+            "SetupLambdaVersionM3V30KJudjaIXDAJHyDBUQnfUBEcBxnslt5iNy6eE": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "SetupLambdaFunction"
+                },
+                "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+              }
+            },
+            "MigrateLambdaVersionZv0wu1BGuYH16k7tnNoJvqlM0D7SmYFDiYAUukTzoYI": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "MigrateLambdaFunction"
+                },
+                "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+              }
+            },
+            "GetEntriesLambdaVersionhRXFeShy9TWEq5RzzmMAMyXdXRvq7Pu9z7JSmdT0": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "GetEntriesLambdaFunction"
+                },
+                "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+              }
+            },
+            "CreateEntryLambdaVersionG1SmNuGelamExMNT9SKRiqEVVkpu42k6YdspEqU2aM": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "CreateEntryLambdaFunction"
+                },
+                "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+              }
+            },
+            "ApiGatewayRestApi": {
+              "Type": "AWS::ApiGateway::RestApi",
+              "Properties": {
+                "Name": "dev-analytics-dashboard-api",
+                "EndpointConfiguration": {
+                  "Types": [
+                    "EDGE"
+                  ]
+                },
+                "Policy": ""
+              }
+            },
+            "ApiGatewayResourceApi": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Fn::GetAtt": [
+                    "ApiGatewayRestApi",
+                    "RootResourceId"
+                  ]
+                },
+                "PathPart": "api",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayResourceApiHealth": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Ref": "ApiGatewayResourceApi"
+                },
+                "PathPart": "health",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayResourceApiSetup": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Ref": "ApiGatewayResourceApi"
+                },
+                "PathPart": "setup",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayResourceApiMigrate": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Ref": "ApiGatewayResourceApi"
+                },
+                "PathPart": "migrate",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayResourceApiEntries": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Ref": "ApiGatewayResourceApi"
+                },
+                "PathPart": "entries",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayMethodApiHealthOptions": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "AuthorizationType": "NONE",
+                "HttpMethod": "OPTIONS",
+                "MethodResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": true,
+                      "method.response.header.Access-Control-Allow-Headers": true,
+                      "method.response.header.Access-Control-Allow-Methods": true,
+                      "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                    },
+                    "ResponseModels": {}
+                  }
+                ],
+                "RequestParameters": {},
+                "Integration": {
+                  "Type": "MOCK",
+                  "RequestTemplates": {
+                    "application/json": "{statusCode:200}"
+                  },
+                  "ContentHandling": "CONVERT_TO_TEXT",
+                  "IntegrationResponses": [
+                    {
+                      "StatusCode": "200",
+                      "ResponseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'",
+                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,x-user-id,X-User-Id'",
+                        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'",
+                        "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                      },
+                      "ResponseTemplates": {
+                        "application/json": ""
+                      }
+                    }
+                  ]
+                },
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceApiHealth"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayMethodApiSetupOptions": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "AuthorizationType": "NONE",
+                "HttpMethod": "OPTIONS",
+                "MethodResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": true,
+                      "method.response.header.Access-Control-Allow-Headers": true,
+                      "method.response.header.Access-Control-Allow-Methods": true
+                    },
+                    "ResponseModels": {}
+                  }
+                ],
+                "RequestParameters": {},
+                "Integration": {
+                  "Type": "MOCK",
+                  "RequestTemplates": {
+                    "application/json": "{statusCode:200}"
+                  },
+                  "ContentHandling": "CONVERT_TO_TEXT",
+                  "IntegrationResponses": [
+                    {
+                      "StatusCode": "200",
+                      "ResponseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'",
+                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                      },
+                      "ResponseTemplates": {
+                        "application/json": ""
+                      }
+                    }
+                  ]
+                },
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceApiSetup"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayMethodApiMigrateOptions": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "AuthorizationType": "NONE",
+                "HttpMethod": "OPTIONS",
+                "MethodResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": true,
+                      "method.response.header.Access-Control-Allow-Headers": true,
+                      "method.response.header.Access-Control-Allow-Methods": true
+                    },
+                    "ResponseModels": {}
+                  }
+                ],
+                "RequestParameters": {},
+                "Integration": {
+                  "Type": "MOCK",
+                  "RequestTemplates": {
+                    "application/json": "{statusCode:200}"
+                  },
+                  "ContentHandling": "CONVERT_TO_TEXT",
+                  "IntegrationResponses": [
+                    {
+                      "StatusCode": "200",
+                      "ResponseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'",
+                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                      },
+                      "ResponseTemplates": {
+                        "application/json": ""
+                      }
+                    }
+                  ]
+                },
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceApiMigrate"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayMethodApiEntriesOptions": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "AuthorizationType": "NONE",
+                "HttpMethod": "OPTIONS",
+                "MethodResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": true,
+                      "method.response.header.Access-Control-Allow-Headers": true,
+                      "method.response.header.Access-Control-Allow-Methods": true,
+                      "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                    },
+                    "ResponseModels": {}
+                  }
+                ],
+                "RequestParameters": {},
+                "Integration": {
+                  "Type": "MOCK",
+                  "RequestTemplates": {
+                    "application/json": "{statusCode:200}"
+                  },
+                  "ContentHandling": "CONVERT_TO_TEXT",
+                  "IntegrationResponses": [
+                    {
+                      "StatusCode": "200",
+                      "ResponseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'",
+                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,x-user-id,X-User-Id'",
+                        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST,GET'",
+                        "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                      },
+                      "ResponseTemplates": {
+                        "application/json": ""
+                      }
+                    }
+                  ]
+                },
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceApiEntries"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayMethodApiHealthGet": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "GET",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceApiHealth"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "HealthLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "HealthLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayMethodApiSetupGet": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "GET",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceApiSetup"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "SetupLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "SetupLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayMethodApiMigrateGet": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "GET",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceApiMigrate"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "MigrateLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "MigrateLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayMethodApiEntriesGet": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "GET",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceApiEntries"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "GetEntriesLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "GetEntriesLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayMethodApiEntriesPost": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "POST",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceApiEntries"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "CreateEntryLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "CreateEntryLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayDeployment1770504483912": {
+              "Type": "AWS::ApiGateway::Deployment",
+              "Properties": {
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "StageName": "dev"
+              },
+              "DependsOn": [
+                "ApiGatewayMethodApiHealthOptions",
+                "ApiGatewayMethodApiSetupOptions",
+                "ApiGatewayMethodApiMigrateOptions",
+                "ApiGatewayMethodApiEntriesOptions",
+                "ApiGatewayMethodApiHealthGet",
+                "ApiGatewayMethodApiSetupGet",
+                "ApiGatewayMethodApiMigrateGet",
+                "ApiGatewayMethodApiEntriesGet",
+                "ApiGatewayMethodApiEntriesPost"
+              ]
+            },
+            "HealthLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "HealthLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "SetupLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "SetupLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "MigrateLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "MigrateLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "GetEntriesLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "GetEntriesLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "CreateEntryLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "CreateEntryLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+              "Export": {
+                "Name": "sls-analytics-dashboard-api-dev-ServerlessDeploymentBucketName"
+              }
+            },
+            "HealthLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "HealthLambdaVersionjisdMu79Cbvl2oI02MKzjNsKp2a0v8IG0IiYM9SXfA"
+              },
+              "Export": {
+                "Name": "sls-analytics-dashboard-api-dev-HealthLambdaFunctionQualifiedArn"
+              }
+            },
+            "SetupLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "SetupLambdaVersionM3V30KJudjaIXDAJHyDBUQnfUBEcBxnslt5iNy6eE"
+              },
+              "Export": {
+                "Name": "sls-analytics-dashboard-api-dev-SetupLambdaFunctionQualifiedArn"
+              }
+            },
+            "MigrateLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "MigrateLambdaVersionZv0wu1BGuYH16k7tnNoJvqlM0D7SmYFDiYAUukTzoYI"
+              },
+              "Export": {
+                "Name": "sls-analytics-dashboard-api-dev-MigrateLambdaFunctionQualifiedArn"
+              }
+            },
+            "GetEntriesLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "GetEntriesLambdaVersionhRXFeShy9TWEq5RzzmMAMyXdXRvq7Pu9z7JSmdT0"
+              },
+              "Export": {
+                "Name": "sls-analytics-dashboard-api-dev-GetEntriesLambdaFunctionQualifiedArn"
+              }
+            },
+            "CreateEntryLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "CreateEntryLambdaVersionG1SmNuGelamExMNT9SKRiqEVVkpu42k6YdspEqU2aM"
+              },
+              "Export": {
+                "Name": "sls-analytics-dashboard-api-dev-CreateEntryLambdaFunctionQualifiedArn"
+              }
+            },
+            "ServiceEndpoint": {
+              "Description": "URL of the service endpoint",
+              "Value": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    ".execute-api.",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ".",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    },
+                    "/dev"
+                  ]
+                ]
+              },
+              "Export": {
+                "Name": "sls-analytics-dashboard-api-dev-ServiceEndpoint"
+              }
+            }
+          }
+        }
+      },
+      "functions": {
+        "health": {
+          "handler": "handler.health",
+          "events": [
+            {
+              "http": {
+                "path": "api/health",
+                "method": "get",
+                "cors": {
+                  "origin": "*",
+                  "methods": [
+                    "OPTIONS",
+                    "GET"
+                  ],
+                  "headers": [
+                    "Content-Type",
+                    "X-Amz-Date",
+                    "Authorization",
+                    "X-Api-Key",
+                    "X-Amz-Security-Token",
+                    "x-user-id",
+                    "X-User-Id"
+                  ],
+                  "allowCredentials": "<REDACTED>"
+                },
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "name": "analytics-dashboard-api-dev-health",
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs20.x",
+          "vpc": {},
+          "versionLogicalId": "HealthLambdaVersionjisdMu79Cbvl2oI02MKzjNsKp2a0v8IG0IiYM9SXfA"
+        },
+        "setup": {
+          "handler": "setup.handler",
+          "events": [
+            {
+              "http": {
+                "path": "api/setup",
+                "method": "get",
+                "cors": {
+                  "origin": "*",
+                  "methods": [
+                    "OPTIONS",
+                    "GET"
+                  ],
+                  "headers": [
+                    "Content-Type",
+                    "X-Amz-Date",
+                    "Authorization",
+                    "X-Api-Key",
+                    "X-Amz-Security-Token",
+                    "X-Amz-User-Agent",
+                    "X-Amzn-Trace-Id"
+                  ],
+                  "allowCredentials": "<REDACTED>"
+                },
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "name": "analytics-dashboard-api-dev-setup",
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs20.x",
+          "vpc": {},
+          "versionLogicalId": "SetupLambdaVersionM3V30KJudjaIXDAJHyDBUQnfUBEcBxnslt5iNy6eE"
+        },
+        "migrate": {
+          "handler": "migrate.handler",
+          "events": [
+            {
+              "http": {
+                "path": "api/migrate",
+                "method": "get",
+                "cors": {
+                  "origin": "*",
+                  "methods": [
+                    "OPTIONS",
+                    "GET"
+                  ],
+                  "headers": [
+                    "Content-Type",
+                    "X-Amz-Date",
+                    "Authorization",
+                    "X-Api-Key",
+                    "X-Amz-Security-Token",
+                    "X-Amz-User-Agent",
+                    "X-Amzn-Trace-Id"
+                  ],
+                  "allowCredentials": "<REDACTED>"
+                },
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "name": "analytics-dashboard-api-dev-migrate",
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs20.x",
+          "vpc": {},
+          "versionLogicalId": "MigrateLambdaVersionZv0wu1BGuYH16k7tnNoJvqlM0D7SmYFDiYAUukTzoYI"
+        },
+        "getEntries": {
+          "handler": "handler.getEntries",
+          "events": [
+            {
+              "http": {
+                "path": "api/entries",
+                "method": "get",
+                "cors": {
+                  "origin": "*",
+                  "methods": [
+                    "OPTIONS",
+                    "GET"
+                  ],
+                  "headers": [
+                    "Content-Type",
+                    "X-Amz-Date",
+                    "Authorization",
+                    "X-Api-Key",
+                    "X-Amz-Security-Token",
+                    "x-user-id",
+                    "X-User-Id"
+                  ],
+                  "allowCredentials": "<REDACTED>"
+                },
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "name": "analytics-dashboard-api-dev-getEntries",
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs20.x",
+          "vpc": {},
+          "versionLogicalId": "GetEntriesLambdaVersionhRXFeShy9TWEq5RzzmMAMyXdXRvq7Pu9z7JSmdT0"
+        },
+        "createEntry": {
+          "handler": "handler.createEntry",
+          "events": [
+            {
+              "http": {
+                "path": "api/entries",
+                "method": "post",
+                "cors": {
+                  "origin": "*",
+                  "methods": [
+                    "OPTIONS",
+                    "POST"
+                  ],
+                  "headers": [
+                    "Content-Type",
+                    "X-Amz-Date",
+                    "Authorization",
+                    "X-Api-Key",
+                    "X-Amz-Security-Token",
+                    "x-user-id",
+                    "X-User-Id"
+                  ],
+                  "allowCredentials": "<REDACTED>"
+                },
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "name": "analytics-dashboard-api-dev-createEntry",
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs20.x",
+          "vpc": {},
+          "versionLogicalId": "CreateEntryLambdaVersionG1SmNuGelamExMNT9SKRiqEVVkpu42k6YdspEqU2aM"
+        }
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs20.x",
+      "region": "us-east-1",
+      "stage": "dev",
+      "environment": {
+        "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+        "DB_USER": "postgres",
+        "DB_PASS": "s2321493A!",
+        "DB_NAME": "analytics_dashboard",
+        "DB_PORT": "5432"
+      },
+      "iamRoleStatements": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "ec2:CreateNetworkInterface",
+            "ec2:DescribeNetworkInterfaces",
+            "ec2:DeleteNetworkInterface",
+            "ec2:AssignPrivateIpAddresses",
+            "ec2:UnassignPrivateIpAddresses"
+          ],
+          "Resource": "*"
+        }
+      ],
+      "vpc": {
+        "securityGroupIds": [
+          "sg-07f8e5e39b6c2c687"
+        ],
+        "subnetIds": [
+          "subnet-002067f89a3e5fad2",
+          "subnet-06f348836099aef56"
+        ]
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "HealthLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-health"
+            }
+          },
+          "SetupLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-setup"
+            }
+          },
+          "MigrateLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-migrate"
+            }
+          },
+          "GetEntriesLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-getEntries"
+            }
+          },
+          "CreateEntryLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-createEntry"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "analytics-dashboard-api",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup",
+                          "logs:TagResource"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/analytics-dashboard-api-dev*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/analytics-dashboard-api-dev*:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "ec2:CreateNetworkInterface",
+                          "ec2:DescribeNetworkInterfaces",
+                          "ec2:DeleteNetworkInterface",
+                          "ec2:AssignPrivateIpAddresses",
+                          "ec2:UnassignPrivateIpAddresses"
+                        ],
+                        "Resource": "*"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "analytics-dashboard-api",
+                    "dev",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              },
+              "ManagedPolicyArns": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+                    ]
+                  ]
+                }
+              ]
+            }
+          },
+          "HealthLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+                "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+              },
+              "Handler": "handler.health",
+              "Runtime": "nodejs20.x",
+              "FunctionName": "analytics-dashboard-api-dev-health",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                  "DB_USER": "postgres",
+                  "DB_PASS": "s2321493A!",
+                  "DB_NAME": "analytics_dashboard",
+                  "DB_PORT": "5432"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "VpcConfig": {
+                "SecurityGroupIds": [
+                  "sg-07f8e5e39b6c2c687"
+                ],
+                "SubnetIds": [
+                  "subnet-002067f89a3e5fad2",
+                  "subnet-06f348836099aef56"
+                ]
+              }
+            },
+            "DependsOn": [
+              "HealthLogGroup"
+            ]
+          },
+          "SetupLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+                "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+              },
+              "Handler": "setup.handler",
+              "Runtime": "nodejs20.x",
+              "FunctionName": "analytics-dashboard-api-dev-setup",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                  "DB_USER": "postgres",
+                  "DB_PASS": "s2321493A!",
+                  "DB_NAME": "analytics_dashboard",
+                  "DB_PORT": "5432"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "VpcConfig": {
+                "SecurityGroupIds": [
+                  "sg-07f8e5e39b6c2c687"
+                ],
+                "SubnetIds": [
+                  "subnet-002067f89a3e5fad2",
+                  "subnet-06f348836099aef56"
+                ]
+              }
+            },
+            "DependsOn": [
+              "SetupLogGroup"
+            ]
+          },
+          "MigrateLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+                "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+              },
+              "Handler": "migrate.handler",
+              "Runtime": "nodejs20.x",
+              "FunctionName": "analytics-dashboard-api-dev-migrate",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                  "DB_USER": "postgres",
+                  "DB_PASS": "s2321493A!",
+                  "DB_NAME": "analytics_dashboard",
+                  "DB_PORT": "5432"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "VpcConfig": {
+                "SecurityGroupIds": [
+                  "sg-07f8e5e39b6c2c687"
+                ],
+                "SubnetIds": [
+                  "subnet-002067f89a3e5fad2",
+                  "subnet-06f348836099aef56"
+                ]
+              }
+            },
+            "DependsOn": [
+              "MigrateLogGroup"
+            ]
+          },
+          "GetEntriesLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+                "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+              },
+              "Handler": "handler.getEntries",
+              "Runtime": "nodejs20.x",
+              "FunctionName": "analytics-dashboard-api-dev-getEntries",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                  "DB_USER": "postgres",
+                  "DB_PASS": "s2321493A!",
+                  "DB_NAME": "analytics_dashboard",
+                  "DB_PORT": "5432"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "VpcConfig": {
+                "SecurityGroupIds": [
+                  "sg-07f8e5e39b6c2c687"
+                ],
+                "SubnetIds": [
+                  "subnet-002067f89a3e5fad2",
+                  "subnet-06f348836099aef56"
+                ]
+              }
+            },
+            "DependsOn": [
+              "GetEntriesLogGroup"
+            ]
+          },
+          "CreateEntryLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+                "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+              },
+              "Handler": "handler.createEntry",
+              "Runtime": "nodejs20.x",
+              "FunctionName": "analytics-dashboard-api-dev-createEntry",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                  "DB_USER": "postgres",
+                  "DB_PASS": "s2321493A!",
+                  "DB_NAME": "analytics_dashboard",
+                  "DB_PORT": "5432"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "VpcConfig": {
+                "SecurityGroupIds": [
+                  "sg-07f8e5e39b6c2c687"
+                ],
+                "SubnetIds": [
+                  "subnet-002067f89a3e5fad2",
+                  "subnet-06f348836099aef56"
+                ]
+              }
+            },
+            "DependsOn": [
+              "CreateEntryLogGroup"
+            ]
+          },
+          "HealthLambdaVersionjisdMu79Cbvl2oI02MKzjNsKp2a0v8IG0IiYM9SXfA": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "HealthLambdaFunction"
+              },
+              "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+            }
+          },
+          "SetupLambdaVersionM3V30KJudjaIXDAJHyDBUQnfUBEcBxnslt5iNy6eE": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "SetupLambdaFunction"
+              },
+              "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+            }
+          },
+          "MigrateLambdaVersionZv0wu1BGuYH16k7tnNoJvqlM0D7SmYFDiYAUukTzoYI": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "MigrateLambdaFunction"
+              },
+              "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+            }
+          },
+          "GetEntriesLambdaVersionhRXFeShy9TWEq5RzzmMAMyXdXRvq7Pu9z7JSmdT0": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetEntriesLambdaFunction"
+              },
+              "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+            }
+          },
+          "CreateEntryLambdaVersionG1SmNuGelamExMNT9SKRiqEVVkpu42k6YdspEqU2aM": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CreateEntryLambdaFunction"
+              },
+              "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "dev-analytics-dashboard-api",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
+            }
+          },
+          "ApiGatewayResourceApi": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "api",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceApiHealth": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceApi"
+              },
+              "PathPart": "health",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceApiSetup": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceApi"
+              },
+              "PathPart": "setup",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceApiMigrate": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceApi"
+              },
+              "PathPart": "migrate",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceApiEntries": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceApi"
+              },
+              "PathPart": "entries",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodApiHealthOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true,
+                    "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,x-user-id,X-User-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'",
+                      "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceApiHealth"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodApiSetupOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceApiSetup"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodApiMigrateOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceApiMigrate"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodApiEntriesOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true,
+                    "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,x-user-id,X-User-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST,GET'",
+                      "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceApiEntries"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodApiHealthGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceApiHealth"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": "<REDACTED>",
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "HealthLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "HealthLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodApiSetupGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceApiSetup"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": "<REDACTED>",
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "SetupLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "SetupLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodApiMigrateGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceApiMigrate"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": "<REDACTED>",
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "MigrateLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "MigrateLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodApiEntriesGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceApiEntries"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": "<REDACTED>",
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "GetEntriesLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "GetEntriesLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodApiEntriesPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceApiEntries"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": "<REDACTED>",
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "CreateEntryLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "CreateEntryLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1770504483912": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodApiHealthOptions",
+              "ApiGatewayMethodApiSetupOptions",
+              "ApiGatewayMethodApiMigrateOptions",
+              "ApiGatewayMethodApiEntriesOptions",
+              "ApiGatewayMethodApiHealthGet",
+              "ApiGatewayMethodApiSetupGet",
+              "ApiGatewayMethodApiMigrateGet",
+              "ApiGatewayMethodApiEntriesGet",
+              "ApiGatewayMethodApiEntriesPost"
+            ]
+          },
+          "HealthLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "HealthLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "SetupLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "SetupLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "MigrateLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "MigrateLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "GetEntriesLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "GetEntriesLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "CreateEntryLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CreateEntryLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+            "Export": {
+              "Name": "sls-analytics-dashboard-api-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "HealthLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "HealthLambdaVersionjisdMu79Cbvl2oI02MKzjNsKp2a0v8IG0IiYM9SXfA"
+            },
+            "Export": {
+              "Name": "sls-analytics-dashboard-api-dev-HealthLambdaFunctionQualifiedArn"
+            }
+          },
+          "SetupLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "SetupLambdaVersionM3V30KJudjaIXDAJHyDBUQnfUBEcBxnslt5iNy6eE"
+            },
+            "Export": {
+              "Name": "sls-analytics-dashboard-api-dev-SetupLambdaFunctionQualifiedArn"
+            }
+          },
+          "MigrateLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "MigrateLambdaVersionZv0wu1BGuYH16k7tnNoJvqlM0D7SmYFDiYAUukTzoYI"
+            },
+            "Export": {
+              "Name": "sls-analytics-dashboard-api-dev-MigrateLambdaFunctionQualifiedArn"
+            }
+          },
+          "GetEntriesLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetEntriesLambdaVersionhRXFeShy9TWEq5RzzmMAMyXdXRvq7Pu9z7JSmdT0"
+            },
+            "Export": {
+              "Name": "sls-analytics-dashboard-api-dev-GetEntriesLambdaFunctionQualifiedArn"
+            }
+          },
+          "CreateEntryLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CreateEntryLambdaVersionG1SmNuGelamExMNT9SKRiqEVVkpu42k6YdspEqU2aM"
+            },
+            "Export": {
+              "Name": "sls-analytics-dashboard-api-dev-CreateEntryLambdaFunctionQualifiedArn"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/dev"
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-analytics-dashboard-api-dev-ServiceEndpoint"
+            }
+          }
+        }
+      }
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: analytics-dashboard-api\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: us-east-1\n  stage: dev\n  environment:\n    DB_HOST: ${env:DB_HOST}\n    DB_USER: ${env:DB_USER}\n    DB_PASS: ${env:DB_PASS}\n    DB_NAME: ${env:DB_NAME}\n    DB_PORT: ${env:DB_PORT}\n  iamRoleStatements:\n    - Effect: Allow\n      Action:\n        - ec2:CreateNetworkInterface\n        - ec2:DescribeNetworkInterfaces\n        - ec2:DeleteNetworkInterface\n        - ec2:AssignPrivateIpAddresses\n        - ec2:UnassignPrivateIpAddresses\n      Resource: \"*\"\n  vpc:\n    securityGroupIds:\n      - sg-07f8e5e39b6c2c687\n    subnetIds:\n      - subnet-002067f89a3e5fad2\n      - subnet-06f348836099aef56\n\nfunctions:\n  health:\n    handler: handler.health\n    events:\n      - http:\n          path: /api/health\n          method: get\n          cors:\n            origin: '*'\n            headers:\n              - Content-Type\n              - X-Amz-Date\n              - Authorization\n              - X-Api-Key\n              - X-Amz-Security-Token\n              - x-user-id\n              - X-User-Id\n            allowCredentials: true\n  \n  setup:\n    handler: setup.handler\n    events:\n      - http:\n          path: /api/setup\n          method: get\n          cors: true\n  \n  migrate:\n    handler: migrate.handler\n    events:\n      - http:\n          path: /api/migrate\n          method: get\n          cors: true\n  \n  getEntries:\n    handler: handler.getEntries\n    events:\n      - http:\n          path: /api/entries\n          method: get\n          cors:\n            origin: '*'\n            headers:\n              - Content-Type\n              - X-Amz-Date\n              - Authorization\n              - X-Api-Key\n              - X-Amz-Security-Token\n              - x-user-id\n              - X-User-Id\n            allowCredentials: true\n  \n  createEntry:\n    handler: handler.createEntry\n    events:\n      - http:\n          path: /api/entries\n          method: post\n          cors:\n            origin: '*'\n            headers:\n              - Content-Type\n              - X-Amz-Date\n              - Authorization\n              - X-Api-Key\n              - X-Amz-Security-Token\n              - x-user-id\n              - X-User-Id\n            allowCredentials: true",
+    "command": [
+      "deploy"
+    ],
+    "options": {},
+    "orgId": "80a72aa9-ed45-4de6-824e-b44225815489",
+    "orgName": "college718",
+    "userId": "24BwrrYMpFNgs39SR0",
+    "userName": "college718",
+    "serviceProviderAwsAccountId": "379503336134",
+    "serviceProviderAwsCfStackName": "analytics-dashboard-api-dev",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:379503336134:stack/analytics-dashboard-api-dev/3b2b6790-046e-11f1-9328-0affe42e7797",
+    "serviceProviderAwsCfStackCreated": "2026-02-07T21:44:51.209Z",
+    "serviceProviderAwsCfStackUpdated": "2026-02-07T22:42:00.515Z",
+    "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "MigrateLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:379503336134:function:analytics-dashboard-api-dev-migrate:3",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-analytics-dashboard-api-dev-MigrateLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "GetEntriesLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:379503336134:function:analytics-dashboard-api-dev-getEntries:7",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-analytics-dashboard-api-dev-GetEntriesLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "HealthLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:379503336134:function:analytics-dashboard-api-dev-health:7",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-analytics-dashboard-api-dev-HealthLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "CreateEntryLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:379503336134:function:analytics-dashboard-api-dev-createEntry:7",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-analytics-dashboard-api-dev-CreateEntryLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "SetupLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:379503336134:function:analytics-dashboard-api-dev-setup:4",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-analytics-dashboard-api-dev-SetupLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServiceEndpoint",
+        "OutputValue": "https://5bdlur57z0.execute-api.us-east-1.amazonaws.com/dev",
+        "Description": "URL of the service endpoint",
+        "ExportName": "sls-analytics-dashboard-api-dev-ServiceEndpoint"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+        "ExportName": "sls-analytics-dashboard-api-dev-ServerlessDeploymentBucketName"
+      }
+    ],
+    "compiledCloudFormationTemplate": {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Description": "The AWS CloudFormation template for this Serverless application",
+      "Resources": {
+        "HealthLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-health"
+          }
+        },
+        "SetupLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-setup"
+          }
+        },
+        "MigrateLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-migrate"
+          }
+        },
+        "GetEntriesLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-getEntries"
+          }
+        },
+        "CreateEntryLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/analytics-dashboard-api-dev-createEntry"
+          }
+        },
+        "IamRoleLambdaExecution": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com"
+                    ]
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "analytics-dashboard-api",
+                      "dev",
+                      "lambda"
+                    ]
+                  ]
+                },
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:CreateLogStream",
+                        "logs:CreateLogGroup",
+                        "logs:TagResource"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/analytics-dashboard-api-dev*:*"
+                        }
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:PutLogEvents"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/analytics-dashboard-api-dev*:*:*"
+                        }
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "ec2:CreateNetworkInterface",
+                        "ec2:DescribeNetworkInterfaces",
+                        "ec2:DeleteNetworkInterface",
+                        "ec2:AssignPrivateIpAddresses",
+                        "ec2:UnassignPrivateIpAddresses"
+                      ],
+                      "Resource": "*"
+                    }
+                  ]
+                }
+              }
+            ],
+            "Path": "/",
+            "RoleName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "analytics-dashboard-api",
+                  "dev",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  "lambdaRole"
+                ]
+              ]
+            },
+            "ManagedPolicyArns": [
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+                  ]
+                ]
+              }
+            ]
+          }
+        },
+        "HealthLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+              "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+            },
+            "Handler": "handler.health",
+            "Runtime": "nodejs20.x",
+            "FunctionName": "analytics-dashboard-api-dev-health",
+            "MemorySize": 1024,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                "DB_USER": "postgres",
+                "DB_PASS": "s2321493A!",
+                "DB_NAME": "analytics_dashboard",
+                "DB_PORT": "5432"
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "IamRoleLambdaExecution",
+                "Arn"
+              ]
+            },
+            "VpcConfig": {
+              "SecurityGroupIds": [
+                "sg-07f8e5e39b6c2c687"
+              ],
+              "SubnetIds": [
+                "subnet-002067f89a3e5fad2",
+                "subnet-06f348836099aef56"
+              ]
+            }
+          },
+          "DependsOn": [
+            "HealthLogGroup"
+          ]
+        },
+        "SetupLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+              "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+            },
+            "Handler": "setup.handler",
+            "Runtime": "nodejs20.x",
+            "FunctionName": "analytics-dashboard-api-dev-setup",
+            "MemorySize": 1024,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                "DB_USER": "postgres",
+                "DB_PASS": "s2321493A!",
+                "DB_NAME": "analytics_dashboard",
+                "DB_PORT": "5432"
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "IamRoleLambdaExecution",
+                "Arn"
+              ]
+            },
+            "VpcConfig": {
+              "SecurityGroupIds": [
+                "sg-07f8e5e39b6c2c687"
+              ],
+              "SubnetIds": [
+                "subnet-002067f89a3e5fad2",
+                "subnet-06f348836099aef56"
+              ]
+            }
+          },
+          "DependsOn": [
+            "SetupLogGroup"
+          ]
+        },
+        "MigrateLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+              "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+            },
+            "Handler": "migrate.handler",
+            "Runtime": "nodejs20.x",
+            "FunctionName": "analytics-dashboard-api-dev-migrate",
+            "MemorySize": 1024,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                "DB_USER": "postgres",
+                "DB_PASS": "s2321493A!",
+                "DB_NAME": "analytics_dashboard",
+                "DB_PORT": "5432"
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "IamRoleLambdaExecution",
+                "Arn"
+              ]
+            },
+            "VpcConfig": {
+              "SecurityGroupIds": [
+                "sg-07f8e5e39b6c2c687"
+              ],
+              "SubnetIds": [
+                "subnet-002067f89a3e5fad2",
+                "subnet-06f348836099aef56"
+              ]
+            }
+          },
+          "DependsOn": [
+            "MigrateLogGroup"
+          ]
+        },
+        "GetEntriesLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+              "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+            },
+            "Handler": "handler.getEntries",
+            "Runtime": "nodejs20.x",
+            "FunctionName": "analytics-dashboard-api-dev-getEntries",
+            "MemorySize": 1024,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                "DB_USER": "postgres",
+                "DB_PASS": "s2321493A!",
+                "DB_NAME": "analytics_dashboard",
+                "DB_PORT": "5432"
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "IamRoleLambdaExecution",
+                "Arn"
+              ]
+            },
+            "VpcConfig": {
+              "SecurityGroupIds": [
+                "sg-07f8e5e39b6c2c687"
+              ],
+              "SubnetIds": [
+                "subnet-002067f89a3e5fad2",
+                "subnet-06f348836099aef56"
+              ]
+            }
+          },
+          "DependsOn": [
+            "GetEntriesLogGroup"
+          ]
+        },
+        "CreateEntryLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+              "S3Key": "serverless/analytics-dashboard-api/dev/1770504486577-2026-02-07T22:48:06.577Z/analytics-dashboard-api.zip"
+            },
+            "Handler": "handler.createEntry",
+            "Runtime": "nodejs20.x",
+            "FunctionName": "analytics-dashboard-api-dev-createEntry",
+            "MemorySize": 1024,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "DB_HOST": "analytics-dashboard-db.c4j8igoswivx.us-east-1.rds.amazonaws.com",
+                "DB_USER": "postgres",
+                "DB_PASS": "s2321493A!",
+                "DB_NAME": "analytics_dashboard",
+                "DB_PORT": "5432"
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "IamRoleLambdaExecution",
+                "Arn"
+              ]
+            },
+            "VpcConfig": {
+              "SecurityGroupIds": [
+                "sg-07f8e5e39b6c2c687"
+              ],
+              "SubnetIds": [
+                "subnet-002067f89a3e5fad2",
+                "subnet-06f348836099aef56"
+              ]
+            }
+          },
+          "DependsOn": [
+            "CreateEntryLogGroup"
+          ]
+        },
+        "HealthLambdaVersionjisdMu79Cbvl2oI02MKzjNsKp2a0v8IG0IiYM9SXfA": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "HealthLambdaFunction"
+            },
+            "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+          }
+        },
+        "SetupLambdaVersionM3V30KJudjaIXDAJHyDBUQnfUBEcBxnslt5iNy6eE": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "SetupLambdaFunction"
+            },
+            "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+          }
+        },
+        "MigrateLambdaVersionZv0wu1BGuYH16k7tnNoJvqlM0D7SmYFDiYAUukTzoYI": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "MigrateLambdaFunction"
+            },
+            "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+          }
+        },
+        "GetEntriesLambdaVersionhRXFeShy9TWEq5RzzmMAMyXdXRvq7Pu9z7JSmdT0": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "GetEntriesLambdaFunction"
+            },
+            "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+          }
+        },
+        "CreateEntryLambdaVersionG1SmNuGelamExMNT9SKRiqEVVkpu42k6YdspEqU2aM": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "CreateEntryLambdaFunction"
+            },
+            "CodeSha256": "WhHZ/XAWEZYoVvSGQZii3tfEzhR8qwGPmifK5o31IlQ="
+          }
+        },
+        "ApiGatewayRestApi": {
+          "Type": "AWS::ApiGateway::RestApi",
+          "Properties": {
+            "Name": "dev-analytics-dashboard-api",
+            "EndpointConfiguration": {
+              "Types": [
+                "EDGE"
+              ]
+            },
+            "Policy": ""
+          }
+        },
+        "ApiGatewayResourceApi": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "ParentId": {
+              "Fn::GetAtt": [
+                "ApiGatewayRestApi",
+                "RootResourceId"
+              ]
+            },
+            "PathPart": "api",
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayResourceApiHealth": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "ParentId": {
+              "Ref": "ApiGatewayResourceApi"
+            },
+            "PathPart": "health",
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayResourceApiSetup": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "ParentId": {
+              "Ref": "ApiGatewayResourceApi"
+            },
+            "PathPart": "setup",
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayResourceApiMigrate": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "ParentId": {
+              "Ref": "ApiGatewayResourceApi"
+            },
+            "PathPart": "migrate",
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayResourceApiEntries": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "ParentId": {
+              "Ref": "ApiGatewayResourceApi"
+            },
+            "PathPart": "entries",
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayMethodApiHealthOptions": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "AuthorizationType": "NONE",
+            "HttpMethod": "OPTIONS",
+            "MethodResponses": [
+              {
+                "StatusCode": "200",
+                "ResponseParameters": {
+                  "method.response.header.Access-Control-Allow-Origin": true,
+                  "method.response.header.Access-Control-Allow-Headers": true,
+                  "method.response.header.Access-Control-Allow-Methods": true,
+                  "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                },
+                "ResponseModels": {}
+              }
+            ],
+            "RequestParameters": {},
+            "Integration": {
+              "Type": "MOCK",
+              "RequestTemplates": {
+                "application/json": "{statusCode:200}"
+              },
+              "ContentHandling": "CONVERT_TO_TEXT",
+              "IntegrationResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                    "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,x-user-id,X-User-Id'",
+                    "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'",
+                    "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                  },
+                  "ResponseTemplates": {
+                    "application/json": ""
+                  }
+                }
+              ]
+            },
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceApiHealth"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayMethodApiSetupOptions": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "AuthorizationType": "NONE",
+            "HttpMethod": "OPTIONS",
+            "MethodResponses": [
+              {
+                "StatusCode": "200",
+                "ResponseParameters": {
+                  "method.response.header.Access-Control-Allow-Origin": true,
+                  "method.response.header.Access-Control-Allow-Headers": true,
+                  "method.response.header.Access-Control-Allow-Methods": true
+                },
+                "ResponseModels": {}
+              }
+            ],
+            "RequestParameters": {},
+            "Integration": {
+              "Type": "MOCK",
+              "RequestTemplates": {
+                "application/json": "{statusCode:200}"
+              },
+              "ContentHandling": "CONVERT_TO_TEXT",
+              "IntegrationResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                    "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                    "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                  },
+                  "ResponseTemplates": {
+                    "application/json": ""
+                  }
+                }
+              ]
+            },
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceApiSetup"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayMethodApiMigrateOptions": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "AuthorizationType": "NONE",
+            "HttpMethod": "OPTIONS",
+            "MethodResponses": [
+              {
+                "StatusCode": "200",
+                "ResponseParameters": {
+                  "method.response.header.Access-Control-Allow-Origin": true,
+                  "method.response.header.Access-Control-Allow-Headers": true,
+                  "method.response.header.Access-Control-Allow-Methods": true
+                },
+                "ResponseModels": {}
+              }
+            ],
+            "RequestParameters": {},
+            "Integration": {
+              "Type": "MOCK",
+              "RequestTemplates": {
+                "application/json": "{statusCode:200}"
+              },
+              "ContentHandling": "CONVERT_TO_TEXT",
+              "IntegrationResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                    "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                    "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                  },
+                  "ResponseTemplates": {
+                    "application/json": ""
+                  }
+                }
+              ]
+            },
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceApiMigrate"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayMethodApiEntriesOptions": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "AuthorizationType": "NONE",
+            "HttpMethod": "OPTIONS",
+            "MethodResponses": [
+              {
+                "StatusCode": "200",
+                "ResponseParameters": {
+                  "method.response.header.Access-Control-Allow-Origin": true,
+                  "method.response.header.Access-Control-Allow-Headers": true,
+                  "method.response.header.Access-Control-Allow-Methods": true,
+                  "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                },
+                "ResponseModels": {}
+              }
+            ],
+            "RequestParameters": {},
+            "Integration": {
+              "Type": "MOCK",
+              "RequestTemplates": {
+                "application/json": "{statusCode:200}"
+              },
+              "ContentHandling": "CONVERT_TO_TEXT",
+              "IntegrationResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                    "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,x-user-id,X-User-Id'",
+                    "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST,GET'",
+                    "method.response.header.Access-Control-Allow-Credentials": "<REDACTED>"
+                  },
+                  "ResponseTemplates": {
+                    "application/json": ""
+                  }
+                }
+              ]
+            },
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceApiEntries"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayMethodApiHealthGet": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "HttpMethod": "GET",
+            "RequestParameters": {},
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceApiHealth"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ApiKeyRequired": "<REDACTED>",
+            "AuthorizationType": "NONE",
+            "Integration": {
+              "IntegrationHttpMethod": "POST",
+              "Type": "AWS_PROXY",
+              "Uri": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":apigateway:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":lambda:path/2015-03-31/functions/",
+                    {
+                      "Fn::GetAtt": [
+                        "HealthLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "/invocations"
+                  ]
+                ]
+              }
+            },
+            "MethodResponses": []
+          },
+          "DependsOn": [
+            "HealthLambdaPermissionApiGateway"
+          ]
+        },
+        "ApiGatewayMethodApiSetupGet": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "HttpMethod": "GET",
+            "RequestParameters": {},
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceApiSetup"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ApiKeyRequired": "<REDACTED>",
+            "AuthorizationType": "NONE",
+            "Integration": {
+              "IntegrationHttpMethod": "POST",
+              "Type": "AWS_PROXY",
+              "Uri": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":apigateway:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":lambda:path/2015-03-31/functions/",
+                    {
+                      "Fn::GetAtt": [
+                        "SetupLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "/invocations"
+                  ]
+                ]
+              }
+            },
+            "MethodResponses": []
+          },
+          "DependsOn": [
+            "SetupLambdaPermissionApiGateway"
+          ]
+        },
+        "ApiGatewayMethodApiMigrateGet": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "HttpMethod": "GET",
+            "RequestParameters": {},
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceApiMigrate"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ApiKeyRequired": "<REDACTED>",
+            "AuthorizationType": "NONE",
+            "Integration": {
+              "IntegrationHttpMethod": "POST",
+              "Type": "AWS_PROXY",
+              "Uri": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":apigateway:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":lambda:path/2015-03-31/functions/",
+                    {
+                      "Fn::GetAtt": [
+                        "MigrateLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "/invocations"
+                  ]
+                ]
+              }
+            },
+            "MethodResponses": []
+          },
+          "DependsOn": [
+            "MigrateLambdaPermissionApiGateway"
+          ]
+        },
+        "ApiGatewayMethodApiEntriesGet": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "HttpMethod": "GET",
+            "RequestParameters": {},
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceApiEntries"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ApiKeyRequired": "<REDACTED>",
+            "AuthorizationType": "NONE",
+            "Integration": {
+              "IntegrationHttpMethod": "POST",
+              "Type": "AWS_PROXY",
+              "Uri": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":apigateway:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":lambda:path/2015-03-31/functions/",
+                    {
+                      "Fn::GetAtt": [
+                        "GetEntriesLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "/invocations"
+                  ]
+                ]
+              }
+            },
+            "MethodResponses": []
+          },
+          "DependsOn": [
+            "GetEntriesLambdaPermissionApiGateway"
+          ]
+        },
+        "ApiGatewayMethodApiEntriesPost": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "HttpMethod": "POST",
+            "RequestParameters": {},
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceApiEntries"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ApiKeyRequired": "<REDACTED>",
+            "AuthorizationType": "NONE",
+            "Integration": {
+              "IntegrationHttpMethod": "POST",
+              "Type": "AWS_PROXY",
+              "Uri": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":apigateway:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":lambda:path/2015-03-31/functions/",
+                    {
+                      "Fn::GetAtt": [
+                        "CreateEntryLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "/invocations"
+                  ]
+                ]
+              }
+            },
+            "MethodResponses": []
+          },
+          "DependsOn": [
+            "CreateEntryLambdaPermissionApiGateway"
+          ]
+        },
+        "ApiGatewayDeployment1770504483912": {
+          "Type": "AWS::ApiGateway::Deployment",
+          "Properties": {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "StageName": "dev"
+          },
+          "DependsOn": [
+            "ApiGatewayMethodApiHealthOptions",
+            "ApiGatewayMethodApiSetupOptions",
+            "ApiGatewayMethodApiMigrateOptions",
+            "ApiGatewayMethodApiEntriesOptions",
+            "ApiGatewayMethodApiHealthGet",
+            "ApiGatewayMethodApiSetupGet",
+            "ApiGatewayMethodApiMigrateGet",
+            "ApiGatewayMethodApiEntriesGet",
+            "ApiGatewayMethodApiEntriesPost"
+          ]
+        },
+        "HealthLambdaPermissionApiGateway": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "HealthLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  "/*/*"
+                ]
+              ]
+            }
+          }
+        },
+        "SetupLambdaPermissionApiGateway": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "SetupLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  "/*/*"
+                ]
+              ]
+            }
+          }
+        },
+        "MigrateLambdaPermissionApiGateway": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "MigrateLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  "/*/*"
+                ]
+              ]
+            }
+          }
+        },
+        "GetEntriesLambdaPermissionApiGateway": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "GetEntriesLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  "/*/*"
+                ]
+              ]
+            }
+          }
+        },
+        "CreateEntryLambdaPermissionApiGateway": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "CreateEntryLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  "/*/*"
+                ]
+              ]
+            }
+          }
+        }
+      },
+      "Outputs": {
+        "ServerlessDeploymentBucketName": {
+          "Value": "serverless-framework-deployments-us-east-1-024f8ff8-f913",
+          "Export": {
+            "Name": "sls-analytics-dashboard-api-dev-ServerlessDeploymentBucketName"
+          }
+        },
+        "HealthLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "HealthLambdaVersionjisdMu79Cbvl2oI02MKzjNsKp2a0v8IG0IiYM9SXfA"
+          },
+          "Export": {
+            "Name": "sls-analytics-dashboard-api-dev-HealthLambdaFunctionQualifiedArn"
+          }
+        },
+        "SetupLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "SetupLambdaVersionM3V30KJudjaIXDAJHyDBUQnfUBEcBxnslt5iNy6eE"
+          },
+          "Export": {
+            "Name": "sls-analytics-dashboard-api-dev-SetupLambdaFunctionQualifiedArn"
+          }
+        },
+        "MigrateLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "MigrateLambdaVersionZv0wu1BGuYH16k7tnNoJvqlM0D7SmYFDiYAUukTzoYI"
+          },
+          "Export": {
+            "Name": "sls-analytics-dashboard-api-dev-MigrateLambdaFunctionQualifiedArn"
+          }
+        },
+        "GetEntriesLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "GetEntriesLambdaVersionhRXFeShy9TWEq5RzzmMAMyXdXRvq7Pu9z7JSmdT0"
+          },
+          "Export": {
+            "Name": "sls-analytics-dashboard-api-dev-GetEntriesLambdaFunctionQualifiedArn"
+          }
+        },
+        "CreateEntryLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "CreateEntryLambdaVersionG1SmNuGelamExMNT9SKRiqEVVkpu42k6YdspEqU2aM"
+          },
+          "Export": {
+            "Name": "sls-analytics-dashboard-api-dev-CreateEntryLambdaFunctionQualifiedArn"
+          }
+        },
+        "ServiceEndpoint": {
+          "Description": "URL of the service endpoint",
+          "Value": {
+            "Fn::Join": [
+              "",
+              [
+                "https://",
+                {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                ".execute-api.",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ".",
+                {
+                  "Ref": "AWS::URLSuffix"
+                },
+                "/dev"
+              ]
+            ]
+          },
+          "Export": {
+            "Name": "sls-analytics-dashboard-api-dev-ServiceEndpoint"
+          }
+        }
+      }
+    }
+  }
+}
